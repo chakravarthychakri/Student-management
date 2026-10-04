@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import EduTrackLogo from "@/components/EduTrackLogo"
 
 interface ProtectedRouteProps {
-  allowedRole?: "student" | "professor"
+  allowedRole?: "student" | "professor" | "admin" | "any"
 }
 
 export default function ProtectedRoute({ allowedRole }: ProtectedRouteProps) {
@@ -59,7 +59,7 @@ export default function ProtectedRoute({ allowedRole }: ProtectedRouteProps) {
   }
 
   // 4. Role Authorization check
-  if (allowedRole && profile.role !== allowedRole) {
+  if (allowedRole && allowedRole !== "any" && profile.role !== allowedRole) {
     return <Navigate to={`/${profile.role}/dashboard`} replace />
   }
 

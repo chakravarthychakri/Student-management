@@ -12,7 +12,8 @@ import {
   Zap,
   BarChart3,
   ShieldAlert,
-  X
+  X,
+  BookOpen
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -34,6 +35,7 @@ interface SidebarItem {
   icon: React.ElementType
   label: string
   href: string
+  highlight?: boolean
 }
 
 export default function DashboardLayout({ type = "student" }: { type?: "student" | "professor" }) {
@@ -42,6 +44,7 @@ export default function DashboardLayout({ type = "student" }: { type?: "student"
 
   const studentLinks: SidebarItem[] = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/student/dashboard" },
+    { icon: BookOpen, label: "Learning", href: "/learning", highlight: true },
     { icon: FileText, label: "Assignments", href: "/student/assignments" },
     { icon: CheckSquare, label: "Grades", href: "/student/grades" },
     { icon: Zap, label: "Credit Wallet", href: "/student/credits" },
@@ -51,6 +54,7 @@ export default function DashboardLayout({ type = "student" }: { type?: "student"
 
   const professorLinks: SidebarItem[] = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/professor/dashboard" },
+    { icon: BookOpen, label: "Learning", href: "/learning", highlight: true },
     { icon: FileText, label: "Assignments", href: "/professor/assignments" },
     { icon: CheckSquare, label: "Submissions", href: "/professor/submissions" },
     { icon: ShieldAlert, label: "Plagiarism Monitor", href: "/professor/plagiarism" },
@@ -100,14 +104,21 @@ export default function DashboardLayout({ type = "student" }: { type?: "student"
                 key={link.href}
                 to={link.href}
                 onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl text-sm font-semibold transition-all ${
+                className={`flex items-center justify-between px-5 py-3.5 rounded-2xl text-sm font-semibold transition-all ${
                   isActive 
-                    ? "bg-[#E6F0FF] text-[#1E5EFF] shadow-xs" 
-                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                    ? (link.highlight ? "bg-emerald-50 text-emerald-700 shadow-xs" : "bg-[#E6F0FF] text-[#1E5EFF] shadow-xs") 
+                    : (link.highlight ? "text-emerald-700 bg-emerald-50/40 hover:bg-emerald-50" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground")
                 }`}
               >
-                <link.icon className="h-5 w-5 flex-shrink-0" />
-                {link.label}
+                <div className="flex items-center gap-4">
+                  <link.icon className={`h-5 w-5 flex-shrink-0 ${link.highlight ? "text-emerald-600" : ""}`} />
+                  <span>{link.label}</span>
+                </div>
+                {link.highlight && (
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                    Nexus
+                  </span>
+                )}
               </Link>
             )
           })}
