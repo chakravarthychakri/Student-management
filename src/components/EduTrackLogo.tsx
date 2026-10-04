@@ -18,12 +18,12 @@ export default function EduTrackLogo({
   const getLogoHeight = () => {
     if (typeof size === "number") return `${size}px`
     switch (size) {
-      case "xs": return "32px"
-      case "sm": return "44px"
-      case "md": return "60px"
-      case "lg": return "80px"
-      case "xl": return "104px"
-      default: return "60px"
+      case "xs": return "40px"
+      case "sm": return "58px"
+      case "md": return "78px"
+      case "lg": return "102px"
+      case "xl": return "130px"
+      default: return "78px"
     }
   }
 

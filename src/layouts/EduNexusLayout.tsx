@@ -21,7 +21,8 @@ import {
   ChevronRight,
   ShieldCheck,
   Headphones,
-  FileText
+  FileText,
+  LayoutDashboard
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -58,7 +59,7 @@ export default function EduNexusLayout() {
 
   // Student Links
   const studentNavLinks: NavLinkItem[] = [
-    { icon: Home, label: "Home", href: "/learning" },
+    { icon: LayoutDashboard, label: "Dashboard", href: "/learning" },
     { icon: FileText, label: "Notes", href: "/learning/notes" },
     { icon: BrainCircuit, label: "Viva", href: "/learning/viva" },
     { icon: BarChart2, label: "Progress", href: "/learning/progress" },
@@ -68,8 +69,8 @@ export default function EduNexusLayout() {
 
   // Faculty Links
   const facultyNavLinks: NavLinkItem[] = [
-    { icon: Home, label: "Overview", href: "/learning" },
-    { icon: Layers, label: "Faculty Dashboard", href: "/learning/faculty/dashboard" },
+    { icon: LayoutDashboard, label: "Dashboard", href: "/learning" },
+    { icon: Layers, label: "Faculty Hub", href: "/learning/faculty/dashboard" },
     { icon: FileText, label: "Manage Notes", href: "/learning/faculty/notes" },
     { icon: BrainCircuit, label: "Manage Viva", href: "/learning/faculty/viva" },
     { icon: FileQuestion, label: "Question Bank", href: "/learning/faculty/questions" },
@@ -106,9 +107,9 @@ export default function EduNexusLayout() {
       `}>
         <div>
           {/* Brand Header */}
-          <div className="h-16 flex items-center justify-between px-3 border-b border-[#D2ECD9]/60">
-            <Link to="/learning" onClick={() => setSidebarOpen(false)}>
-              <EduNexusLogo size="sm" />
+          <div className="h-20 flex items-center justify-between px-2.5 border-b border-[#D2ECD9]/60">
+            <Link to="/learning" onClick={() => setSidebarOpen(false)} className="flex items-center">
+              <EduNexusLogo size="md" />
             </Link>
             <Button 
               variant="ghost" 
@@ -142,18 +143,19 @@ export default function EduNexusLayout() {
                 </Link>
               )
             })}
-          </nav>
-        </div>
 
-        {/* Bottom Switcher: Back to EduTrack */}
-        <div className="pt-3 border-t border-[#D2ECD9]/60 space-y-2">
-          <Link
-            to={edutrackDashboardUrl}
-            className="flex items-center justify-start gap-2.5 w-full px-3.5 py-2.5 rounded-xl text-slate-700 hover:text-emerald-900 hover:bg-emerald-100/60 text-xs font-bold transition-all"
-          >
-            <ArrowLeft className="h-4 w-4 text-slate-600" />
-            <span>Back to EduTrack</span>
-          </Link>
+            {/* Back to EduTrack: placed right after the Search section */}
+            <div className="pt-2 border-t border-[#D2ECD9]/60 mt-3">
+              <Link
+                to={edutrackDashboardUrl}
+                onClick={() => setSidebarOpen(false)}
+                className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 hover:bg-emerald-100/60 hover:text-emerald-900 transition-all"
+              >
+                <ArrowLeft className="h-4 w-4 shrink-0 text-slate-600" />
+                <span>Back to EduTrack</span>
+              </Link>
+            </div>
+          </nav>
         </div>
       </aside>
 
@@ -183,18 +185,24 @@ export default function EduNexusLayout() {
             {/* Profile Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <div className="flex items-center gap-2 cursor-pointer hover:opacity-90 transition-opacity bg-white px-3 py-1.5 rounded-full border border-slate-200/80 shadow-xs">
-                  <div className="w-7 h-7 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center">
-                    {profile?.full_name ? profile.full_name.charAt(0).toUpperCase() : "S"}
-                  </div>
+                <button
+                  type="button"
+                  className="flex items-center gap-2.5 cursor-pointer hover:opacity-95 transition-all bg-white/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-200/90 shadow-xs hover:border-[#16A34A]/50 hover:bg-white"
+                >
+                  <Avatar className="w-7 h-7 rounded-full border border-white shadow-xs overflow-hidden">
+                    <AvatarImage src={profile?.profile_photo_url || profile?.avatar_url || ""} alt="User avatar" />
+                    <AvatarFallback className="bg-gradient-to-br from-[#16A34A] to-[#15803D] text-white font-bold text-xs flex items-center justify-center">
+                      {profile?.full_name ? profile.full_name.charAt(0).toUpperCase() : "S"}
+                    </AvatarFallback>
+                  </Avatar>
                   <span className="text-xs font-bold text-slate-800 capitalize hidden sm:inline">
                     {profile?.full_name ? profile.full_name.split(" ")[0] : "Student"}
                   </span>
                   <ChevronRight className="h-3 w-3 text-slate-400 rotate-90" />
-                </div>
+                </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56 rounded-2xl shadow-xl border-emerald-100" align="end">
-                <DropdownMenuLabel className="font-normal p-3 bg-emerald-50/50 rounded-t-xl">
+              <DropdownMenuContent className="w-56 rounded-2xl shadow-xl border-emerald-100 bg-white/95 backdrop-blur-md" align="end">
+                <DropdownMenuLabel className="font-normal p-3 bg-emerald-50/60 rounded-t-xl">
                   <div className="flex flex-col space-y-0.5">
                     <p className="text-xs font-bold text-slate-900 capitalize">
                       {profile?.full_name || "Student"}

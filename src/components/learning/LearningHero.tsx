@@ -39,20 +39,21 @@ export default function LearningHero({
         <div className="lg:col-span-7 space-y-4">
           {/* Header Title & Tagline */}
           <div className="space-y-1.5">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-slate-900 flex items-center gap-2">
-              <span>Welcome to EduNexus!</span>
-              <span className="text-2xl sm:text-3xl">👏</span>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-slate-900 leading-tight">
+              Hello, {studentName} <span className="animate-wave inline-block origin-[70%_70%] select-none ml-1 align-baseline">👋</span>
             </h1>
             <p className="text-xs sm:text-sm font-bold text-slate-600 tracking-wide">
-              Learn <span className="text-emerald-600 font-extrabold">•</span> Practice <span className="text-emerald-600 font-extrabold">•</span> Grow <span className="text-emerald-600 font-extrabold">•</span> Succeed
+              Welcome to EduNexus <span className="text-emerald-600 font-extrabold">•</span> Learn <span className="text-emerald-600 font-extrabold">•</span> Practice <span className="text-emerald-600 font-extrabold">•</span> Grow
             </p>
           </div>
 
-          {/* Inspiring Quotation Box */}
-          <div className="flex items-start gap-2.5 p-3 sm:p-3.5 rounded-2xl bg-white/75 backdrop-blur-xs border border-emerald-200/70 shadow-xs max-w-xl">
-            <Quote className="h-4 w-4 text-[#16A34A] shrink-0 rotate-180 mt-0.5" />
-            <p className="text-xs sm:text-[13px] font-medium italic text-slate-700 leading-snug">
-              "Education is the passport to the future, for tomorrow belongs to those who prepare for it today."
+          {/* Inspiring Quotation */}
+          <div className="flex items-center gap-2.5 max-w-xl py-0.5">
+            <div className="w-6 h-6 rounded-full bg-emerald-600/15 flex items-center justify-center shrink-0">
+              <Quote className="h-3.5 w-3.5 text-emerald-700 rotate-180" />
+            </div>
+            <p className="text-xs sm:text-[13.5px] font-medium text-slate-700 leading-snug">
+              “<span className="font-bold text-emerald-900">Education is the passport to the future</span> — for tomorrow belongs to those who prepare for it today.”
             </p>
           </div>
 
@@ -132,8 +133,8 @@ export default function LearningHero({
               loading="eager"
             />
 
-            <p className="text-[10px] font-bold text-slate-500 italic mt-0.5">
-              "Learn without limits"
+            <p className="text-[11px] font-bold text-slate-500 mt-0.5 tracking-wide">
+              “Learn without limits”
             </p>
           </div>
         </div>
