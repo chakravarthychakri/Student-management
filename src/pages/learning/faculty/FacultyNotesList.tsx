@@ -31,6 +31,8 @@ export default function FacultyNotesList() {
   const [notes, setNotes] = useState<LearningNote[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedStatus, setSelectedStatus] = useState("all")
+  const [selectedYear, setSelectedYear] = useState("all")
+  const [selectedSection, setSelectedSection] = useState("all")
 
   const fetchNotes = async () => {
     setLoading(true)
@@ -52,8 +54,17 @@ export default function FacultyNotesList() {
   const handleTogglePublish = async (note: LearningNote) => {
     const newStatus = note.status === "published" ? "draft" : "published"
     try {
-      await LearningService.updateNote(note.id, { status: newStatus })
-      toast.success(newStatus === "published" ? "Note published to students!" : "Note unpublished to draft")
+      const updated = await LearningService.updateNote(note.id, { status: newStatus })
+      if (newStatus === "published") {
+        const yearText = note.target_year ? `Year ${note.target_year}` : "All Years"
+        const secText = (note.target_sections && note.target_sections.length > 0)
+          ? `Sec ${note.target_sections.join(", ")}`
+          : (note.target_section && note.target_section !== "all" ? `Sec ${note.target_section}` : "All Sections")
+
+        toast.success(`Note published! 📢 EduNexus notification sent to ${yearText} (${secText}) students.`)
+      } else {
+        toast.info("Note unpublished to draft")
+      }
       setNotes((prev) =>
         prev.map((n) => (n.id === note.id ? { ...n, status: newStatus } : n))
       )
@@ -73,8 +84,44 @@ export default function FacultyNotesList() {
     }
   }
 
+  const getAudienceLabel = (note: LearningNote) => {
+    const isAllYears = note.all_years || !note.target_year || note.target_year === 0
+    const isAllSec = note.all_sections || (!note.target_sections?.length && (!note.target_section || note.target_section === "all"))
+
+    if (isAllYears && isAllSec) return "All Students"
+    
+    const yearStr = isAllYears ? "All Years" : `Year ${note.target_year}`
+    const secStr = isAllSec 
+      ? "All Sec" 
+      : (note.target_sections && note.target_sections.length > 0 
+          ? `Sec ${note.target_sections.join(",")}` 
+          : `Sec ${note.target_section}`)
+
+    return `${yearStr} • ${secStr}`
+  }
+
   const filteredNotes = notes.filter((n) => {
     if (selectedStatus !== "all" && n.status !== selectedStatus) return false
+    
+    // Filter by Year
+    if (selectedYear !== "all") {
+      const y = Number(selectedYear)
+      if (n.target_year && n.target_year !== 0 && !n.all_years && n.target_year !== y) {
+        return false
+      }
+    }
+
+    // Filter by Section
+    if (selectedSection !== "all") {
+      const sec = selectedSection
+      const matches = n.all_sections || 
+        !n.target_sections?.length || 
+        n.target_sections.includes(sec) || 
+        n.target_section === "all" || 
+        n.target_section === sec
+      if (!matches) return false
+    }
+
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
       return (
@@ -101,7 +148,7 @@ export default function FacultyNotesList() {
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
-            Create, edit, preview, and manage curriculum notes available to enrolled students.
+            Create, edit, target by student Year & Section, and publish curriculum notes with automatic EduNexus student notifications.
           </p>
 
           <div className="pt-1">
@@ -125,7 +172,7 @@ export default function FacultyNotesList() {
       </div>
 
       {/* 2. FILTER & SEARCH BAR */}
-      <div className="bg-white border border-[#E2E8E4] rounded-3xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="bg-white border border-[#E2E8E4] rounded-3xl p-4 sm:p-5 shadow-xs flex flex-col lg:flex-row items-center justify-between gap-3">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-3.5 top-3 h-4 w-4 text-emerald-600" />
           <Input
@@ -137,15 +184,44 @@ export default function FacultyNotesList() {
           />
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="flex items-center gap-2 w-full lg:w-auto flex-wrap sm:flex-nowrap">
+          {/* Status Filter */}
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="h-10 px-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 flex-1 sm:flex-initial"
+            className="h-10 px-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 flex-1 sm:flex-initial"
           >
             <option value="all">All Statuses</option>
             <option value="published">Published</option>
             <option value="draft">Drafts</option>
+          </select>
+
+          {/* Target Year Filter */}
+          <select
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(e.target.value)}
+            className="h-10 px-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 flex-1 sm:flex-initial"
+          >
+            <option value="all">All Target Years</option>
+            <option value="1">1st Year</option>
+            <option value="2">2nd Year</option>
+            <option value="3">3rd Year</option>
+            <option value="4">4th Year</option>
+          </select>
+
+          {/* Target Section Filter */}
+          <select
+            value={selectedSection}
+            onChange={(e) => setSelectedSection(e.target.value)}
+            className="h-10 px-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 flex-1 sm:flex-initial"
+          >
+            <option value="all">All Sections</option>
+            <option value="A">Section A</option>
+            <option value="B">Section B</option>
+            <option value="C">Section C</option>
+            <option value="D">Section D</option>
+            <option value="E">Section E</option>
+            <option value="F">Section F</option>
           </select>
         </div>
       </div>
@@ -165,6 +241,7 @@ export default function FacultyNotesList() {
                 <tr className="border-b border-slate-100 text-slate-400 font-extrabold uppercase tracking-wider">
                   <th className="pb-3 px-3">Title & Topic</th>
                   <th className="pb-3 px-3">Subject & Unit</th>
+                  <th className="pb-3 px-3">Target Audience</th>
                   <th className="pb-3 px-3">Status</th>
                   <th className="pb-3 px-3">Views</th>
                   <th className="pb-3 px-3">Updated</th>
@@ -194,6 +271,12 @@ export default function FacultyNotesList() {
                           {note.unit}
                         </span>
                       </div>
+                    </td>
+
+                    <td className="py-4 px-3">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-blue-50 text-blue-800 text-[11px] font-bold border border-blue-100">
+                        {getAudienceLabel(note)}
+                      </span>
                     </td>
 
                     <td className="py-4 px-3">
@@ -245,7 +328,7 @@ export default function FacultyNotesList() {
                           size="icon"
                           onClick={() => handleTogglePublish(note)}
                           className="h-8 w-8 rounded-xl text-slate-500 hover:text-emerald-700 hover:bg-emerald-50"
-                          title={note.status === "published" ? "Unpublish Note" : "Publish Note"}
+                          title={note.status === "published" ? "Unpublish Note" : "Publish Note & Notify Students"}
                         >
                           {note.status === "published" ? (
                             <ToggleRight className="h-4 w-4 text-emerald-600" />

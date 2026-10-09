@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { supabase } from "./supabase"
+import { createNotificationForTargetGroup } from "./notifications"
 import type {
   LearningNote,
   VivaQuiz,
@@ -138,6 +139,10 @@ export const LearningService = {
     contentType?: ContentType
     search?: string
     studentId?: string
+    targetYear?: number | string
+    targetSection?: string
+    studentYear?: number
+    studentSection?: string
   }): Promise<LearningNote[]> {
     let localNotes = getStorageItem<LearningNote[]>("notes", INITIAL_NOTES)
     const bookmarks = getStorageItem<string[]>(`bookmarks_${filters?.studentId || "default"}`, [])
@@ -178,6 +183,36 @@ export const LearningService = {
         if (filters?.unit && filters.unit !== "all" && n.unit !== filters.unit) return false
         if (filters?.difficulty && filters.difficulty !== "all" && n.difficulty !== filters.difficulty) return false
         if (filters?.contentType && filters.contentType !== "all" && n.content_type !== filters.contentType) return false
+
+        // Filter by Target Year (Faculty Management Filter)
+        if (filters?.targetYear && filters.targetYear !== "all") {
+          const filterY = Number(filters.targetYear)
+          if (n.target_year && n.target_year !== 0 && n.target_year !== filterY) return false
+        }
+
+        // Filter by Target Section (Faculty Management Filter)
+        if (filters?.targetSection && filters.targetSection !== "all") {
+          const filterSec = filters.targetSection
+          const matchesSec = n.all_sections || !n.target_sections?.length || n.target_sections.includes(filterSec) || n.target_section === "all" || n.target_section === filterSec
+          if (!matchesSec) return false
+        }
+
+        // Student Access Control: If viewer is student with specific year/section
+        if (filters?.studentYear) {
+          const noteYear = n.target_year ? Number(n.target_year) : 0
+          if (noteYear !== 0 && !n.all_years && noteYear !== filters.studentYear) {
+            return false
+          }
+        }
+        if (filters?.studentSection) {
+          if (!n.all_sections && n.target_sections && n.target_sections.length > 0 && !n.target_sections.includes(filters.studentSection)) {
+            return false
+          }
+          if (!n.all_sections && n.target_section && n.target_section !== "all" && n.target_section !== filters.studentSection) {
+            return false
+          }
+        }
+
         if (filters?.search && filters.search.trim()) {
           const q = filters.search.toLowerCase()
           return (
@@ -618,6 +653,35 @@ export const LearningService = {
     }
   },
 
+  // 14b. Helper: Send Notification for Published Note
+  async notifyStudentsForNote(note: LearningNote) {
+    if (note.status !== "published") return
+
+    try {
+      const targetYear = (note.target_year && Number(note.target_year) > 0) ? Number(note.target_year) : null
+      const targetSec = (note.target_section && note.target_section !== "all") ? note.target_section : null
+      const targetSecs = (note.target_sections && note.target_sections.length > 0)
+        ? note.target_sections
+        : (targetSec ? [targetSec] : null)
+
+      const yearText = targetYear ? `Year ${targetYear}` : "All Years"
+      const secText = targetSecs && targetSecs.length > 0 ? `Sec ${targetSecs.join(", ")}` : "All Sections"
+      const subjectName = note.subject?.name || "your course"
+
+      await createNotificationForTargetGroup(
+        null,
+        targetYear,
+        targetSec,
+        `📘 New Study Note: ${note.title}`,
+        `Professor published ${note.unit} notes on "${note.topic || note.title}" for ${subjectName} (${yearText} • ${secText}). Access and read now in EduNexus!`,
+        'new_assignment',
+        targetSecs
+      )
+    } catch (err) {
+      console.warn("EduNexus note notification dispatch exception:", err)
+    }
+  },
+
   // 15. Faculty: Create Note
   async createNote(noteData: Partial<LearningNote>): Promise<LearningNote> {
     const notes = getStorageItem<LearningNote[]>("notes", INITIAL_NOTES)
@@ -629,6 +693,11 @@ export const LearningService = {
       description: noteData.description || "",
       unit: noteData.unit || "Unit 1",
       topic: noteData.topic || "Core Topic",
+      target_year: noteData.target_year !== undefined ? Number(noteData.target_year) : 0,
+      target_section: noteData.target_section || "all",
+      target_sections: noteData.target_sections || [],
+      all_years: noteData.all_years !== undefined ? noteData.all_years : (!noteData.target_year || Number(noteData.target_year) === 0),
+      all_sections: noteData.all_sections !== undefined ? noteData.all_sections : (!noteData.target_sections?.length || noteData.target_section === "all"),
       content_type: noteData.content_type || "rich_text",
       content: noteData.content || "",
       file_url: noteData.file_url || null,
@@ -660,6 +729,10 @@ export const LearningService = {
       await supabase.from("learning_notes").insert(newNote)
     } catch (e) {}
 
+    if (newNote.status === "published") {
+      this.notifyStudentsForNote(newNote)
+    }
+
     return newNote
   },
 
@@ -669,6 +742,7 @@ export const LearningService = {
     const index = notes.findIndex(n => n.id === noteId)
     if (index === -1) throw new Error("Note not found")
 
+    const previousStatus = notes[index].status
     const updated = {
       ...notes[index],
       ...updates,
@@ -680,6 +754,10 @@ export const LearningService = {
     try {
       await supabase.from("learning_notes").update(updates).eq("id", noteId)
     } catch (e) {}
+
+    if (updated.status === "published" && previousStatus !== "published") {
+      this.notifyStudentsForNote(updated)
+    }
 
     return updated
   },

@@ -38,7 +38,12 @@ export default function SubjectDetail() {
       try {
         const [subs, nts, vz, prog] = await Promise.all([
           LearningService.getStudentSubjects(profile?.id),
-          LearningService.getNotes({ subjectId: id, studentId: profile?.id }),
+          LearningService.getNotes({
+            subjectId: id,
+            studentId: profile?.id,
+            studentYear: profile?.role === "student" ? profile?.year : undefined,
+            studentSection: profile?.role === "student" ? profile?.section : undefined
+          }),
           LearningService.getVivaQuizzes({ subjectId: id, studentId: profile?.id }),
           LearningService.getStudentProgress(profile?.id)
         ])

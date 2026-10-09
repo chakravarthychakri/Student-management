@@ -19,6 +19,11 @@ export interface LearningNote {
   description?: string | null
   unit: string
   topic: string
+  target_year?: number | null
+  target_section?: string | null
+  target_sections?: string[] | null
+  all_years?: boolean | null
+  all_sections?: boolean | null
   content_type: ContentType
   content?: string | null
   file_url?: string | null

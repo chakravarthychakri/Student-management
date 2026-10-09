@@ -49,7 +49,11 @@ export default function StudentHome() {
         setLoading(true)
         const [subs, nts, vz, prog] = await Promise.all([
           LearningService.getStudentSubjects(profile?.id),
-          LearningService.getNotes({ studentId: profile?.id }),
+          LearningService.getNotes({
+            studentId: profile?.id,
+            studentYear: profile?.role === "student" ? profile?.year : undefined,
+            studentSection: profile?.role === "student" ? profile?.section : undefined
+          }),
           LearningService.getVivaQuizzes({ studentId: profile?.id }),
           LearningService.getStudentProgress(profile?.id)
         ])

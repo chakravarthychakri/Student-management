@@ -13,7 +13,10 @@ import {
   Plus, 
   X,
   Save,
-  Send
+  Send,
+  Users,
+  Bell,
+  GraduationCap
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -62,6 +65,11 @@ int main() {
     tags: ["Engineering", "Core"],
     learning_objectives: ["Understand basic definitions", "Apply core concepts to problems"],
     prerequisites: ["Prerequisites for this unit"],
+    target_year: 0,
+    target_section: "all",
+    target_sections: [],
+    all_years: true,
+    all_sections: true,
     status: "published"
   })
 
@@ -107,12 +115,56 @@ int main() {
     }
   }
 
-  const handleRemoveObjective = (index: number) => {
+  const handleToggleSection = (sec: string) => {
+    if (formData.all_sections) {
+      setFormData((prev) => ({
+        ...prev,
+        all_sections: false,
+        target_sections: [sec],
+        target_section: sec
+      }))
+    } else {
+      const current = formData.target_sections || []
+      const next = current.includes(sec)
+        ? current.filter((s) => s !== sec)
+        : [...current, sec]
+      
+      if (next.length === 0) {
+        setFormData((prev) => ({
+          ...prev,
+          all_sections: true,
+          target_sections: [],
+          target_section: "all"
+        }))
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          all_sections: false,
+          target_sections: next,
+          target_section: next[0]
+        }))
+      }
+    }
+  }
+
+  const handleSelectAllSections = () => {
     setFormData((prev) => ({
       ...prev,
-      learning_objectives: prev.learning_objectives?.filter((_, i) => i !== index)
+      all_sections: true,
+      target_sections: [],
+      target_section: "all"
     }))
   }
+
+  const handleSelectYear = (year: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      target_year: year,
+      all_years: year === 0
+    }))
+  }
+
+  const sectionsList = ["A", "B", "C", "D", "E", "F"]
 
   const handleSave = async (status: "draft" | "published") => {
     if (!formData.title?.trim()) {
@@ -363,6 +415,146 @@ int main() {
               </div>
             </div>
 
+            {/* Target Student Audience & Push Notification Filter */}
+            <div className="p-5 rounded-3xl bg-gradient-to-br from-emerald-50/70 via-white to-slate-50 border-2 border-emerald-100 space-y-4">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold">
+                    <Users className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-black text-slate-900">
+                      Target Student Audience & Access Filter
+                    </h3>
+                    <p className="text-[11px] text-slate-500 font-medium">
+                      Control which academic year and section students can discover and read this note.
+                    </p>
+                  </div>
+                </div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-extrabold">
+                  <Bell className="h-3 w-3 text-emerald-700" />
+                  Push Notification Enabled
+                </span>
+              </div>
+
+              {/* Year Selector */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                  <GraduationCap className="h-3.5 w-3.5 text-emerald-600" />
+                  <span>Target Academic Year</span>
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                  {[
+                    { year: 0, label: "All Years (1-4)" },
+                    { year: 1, label: "1st Year" },
+                    { year: 2, label: "2nd Year" },
+                    { year: 3, label: "3rd Year" },
+                    { year: 4, label: "4th Year" },
+                  ].map((y) => {
+                    const isSelected = (formData.target_year === y.year) || (y.year === 0 && (formData.all_years || !formData.target_year))
+                    return (
+                      <button
+                        key={y.year}
+                        type="button"
+                        onClick={() => handleSelectYear(y.year)}
+                        className={`py-2.5 px-3 rounded-2xl text-xs font-extrabold border transition-all text-center flex items-center justify-center gap-1.5 ${
+                          isSelected
+                            ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
+                            : "bg-white text-slate-700 border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/50"
+                        }`}
+                      >
+                        {isSelected && <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />}
+                        <span>{y.label}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Section Selector */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                    <span>Target Section(s)</span>
+                    <span className="text-[10px] text-slate-400 font-normal">(Select all or specific class sections)</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleSelectAllSections}
+                    className={`text-[11px] font-bold px-2 py-0.5 rounded-lg border transition-colors ${
+                      formData.all_sections
+                        ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                        : "text-slate-500 hover:text-emerald-700 border-slate-200"
+                    }`}
+                  >
+                    Select All Sections
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-3 sm:grid-cols-7 gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSelectAllSections}
+                    className={`py-2 px-2.5 rounded-2xl text-xs font-extrabold border transition-all text-center flex items-center justify-center gap-1 ${
+                      formData.all_sections
+                        ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
+                        : "bg-white text-slate-700 border-slate-200 hover:border-emerald-300"
+                    }`}
+                  >
+                    <span>All</span>
+                  </button>
+                  {sectionsList.map((sec) => {
+                    const isSelected = !formData.all_sections && (formData.target_sections?.includes(sec) || formData.target_section === sec)
+                    return (
+                      <button
+                        key={sec}
+                        type="button"
+                        onClick={() => handleToggleSection(sec)}
+                        className={`py-2 px-2.5 rounded-2xl text-xs font-extrabold border transition-all text-center flex items-center justify-center gap-1 ${
+                          isSelected
+                            ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
+                            : "bg-white text-slate-700 border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/50"
+                        }`}
+                      >
+                        {isSelected && <CheckCircle2 className="h-3 w-3 shrink-0" />}
+                        <span>Sec {sec}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Notification Broadcast Preview Note */}
+              <div className="p-3 rounded-2xl bg-emerald-100/60 border border-emerald-200/80 flex items-start gap-2.5 text-xs text-emerald-950 font-medium">
+                <Bell className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-extrabold text-emerald-900 block mb-0.5">Automated Student Notification</span>
+                  When this note is published, an instant notification alert will be dispatched to students in{" "}
+                  <span className="font-black text-emerald-900">
+                    {formData.all_years || !formData.target_year
+                      ? "All Years"
+                      : formData.target_year === 1
+                      ? "1st Year"
+                      : formData.target_year === 2
+                      ? "2nd Year"
+                      : formData.target_year === 3
+                      ? "3rd Year"
+                      : `${formData.target_year}th Year`}
+                  </span>
+                  {" • "}
+                  <span className="font-black text-emerald-900">
+                    {formData.all_sections
+                      ? "All Sections"
+                      : formData.target_sections && formData.target_sections.length > 0
+                      ? `Section(s) ${formData.target_sections.join(", ")}`
+                      : formData.target_section && formData.target_section !== "all"
+                      ? `Section ${formData.target_section}`
+                      : "All Sections"}
+                  </span>.
+                </div>
+              </div>
+            </div>
+
             {/* Learning Objectives Builder */}
             <div>
               <label className="text-xs font-bold text-slate-700 block mb-1.5">
@@ -534,12 +726,26 @@ int main() {
 
           {/* Student Preview Box */}
           <div className="bg-white border-2 border-emerald-500/40 rounded-3xl p-6 sm:p-10 shadow-lg space-y-6">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="px-3 py-1 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-black uppercase tracking-wider">
                 {selectedSubjectObj?.code} • {formData.unit}
               </span>
               <span className="px-2.5 py-1 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">
                 {formData.difficulty}
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-100 text-emerald-900 text-xs font-bold border border-emerald-200">
+                <Users className="h-3 w-3 text-emerald-700" />
+                <span>
+                  Audience: {formData.all_years || !formData.target_year ? "All Years" : `${formData.target_year}${formData.target_year === 1 ? "st" : formData.target_year === 2 ? "nd" : formData.target_year === 3 ? "rd" : "th"} Year`}
+                  {" • "}
+                  {formData.all_sections
+                    ? "All Sections"
+                    : formData.target_sections && formData.target_sections.length > 0
+                    ? `Sec ${formData.target_sections.join(", ")}`
+                    : formData.target_section && formData.target_section !== "all"
+                    ? `Sec ${formData.target_section}`
+                    : "All Sections"}
+                </span>
               </span>
             </div>
 

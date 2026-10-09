@@ -39,7 +39,9 @@ export default function NotesExplorer() {
         const data = await LearningService.getNotes({
           subjectId: selectedSubject,
           search: searchQuery,
-          studentId: profile?.id
+          studentId: profile?.id,
+          studentYear: profile?.role === "student" ? profile?.year : undefined,
+          studentSection: profile?.role === "student" ? profile?.section : undefined
         })
         
         let filtered = data
