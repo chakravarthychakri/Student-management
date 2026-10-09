@@ -7,17 +7,17 @@ interface StreakCardProps {
 
 export default function StreakCard({
   streak = {
-    current_streak: 0,
-    longest_streak: 0,
-    last_activity_date: "",
+    current_streak: 7,
+    longest_streak: 14,
+    last_activity_date: new Date().toISOString().split("T")[0],
     weekly_history: {
-      Mon: false,
-      Tue: false,
-      Wed: false,
-      Thu: false,
-      Fri: false,
-      Sat: false,
-      Sun: false
+      Mon: true,
+      Tue: true,
+      Wed: true,
+      Thu: true,
+      Fri: true,
+      Sat: true,
+      Sun: true
     }
   }
 }: StreakCardProps) {
@@ -53,16 +53,14 @@ export default function StreakCard({
             return (
               <div
                 key={day}
-                className={`flex flex-col items-center justify-center p-2 rounded-2xl transition-all ${
-                  isCompleted 
-                    ? "bg-gradient-to-b from-emerald-600 to-green-600 text-white shadow-xs" 
-                    : "bg-slate-100 text-slate-400"
-                }`}
+                className={`flex flex-col items-center justify-center p-2 rounded-2xl transition-all ${isCompleted
+                  ? "bg-gradient-to-b from-emerald-600 to-green-600 text-white shadow-xs"
+                  : "bg-slate-100 text-slate-400"
+                  }`}
               >
                 <span className="text-[10px] font-bold uppercase">{day}</span>
-                <div className={`mt-1 w-5 h-5 rounded-full flex items-center justify-center ${
-                  isCompleted ? "bg-white/20" : "bg-slate-200"
-                }`}>
+                <div className={`mt-1 w-5 h-5 rounded-full flex items-center justify-center ${isCompleted ? "bg-white/20" : "bg-slate-200"
+                  }`}>
                   {isCompleted ? (
                     <Check className="h-3 w-3 text-white stroke-[3]" />
                   ) : (
