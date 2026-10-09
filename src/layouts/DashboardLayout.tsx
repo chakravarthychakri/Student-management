@@ -58,7 +58,7 @@ export default function DashboardLayout({ type = "student" }: { type?: "student"
     { icon: FileText, label: "Assignments", href: "/professor/assignments" },
     { icon: CheckSquare, label: "Submissions", href: "/professor/submissions" },
     { icon: ShieldAlert, label: "Plagiarism Monitor", href: "/professor/plagiarism" },
-    { icon: BarChart3, label: "Analytics", href: "/professor/analytics" },
+    { icon: BarChart3, label: "Student Progress", href: "/professor/analytics" },
     { icon: User, label: "Profile", href: "/professor/profile" },
   ]
 

@@ -52,44 +52,7 @@ export default function StudentProgress() {
     )
   }
 
-  const defaultSubjectsProgress = [
-    {
-      id: "s1",
-      name: "Data Structures",
-      icon: FileText,
-      iconBg: "bg-blue-50 text-blue-600",
-      percentage: 80,
-      topicsCompleted: 8,
-      totalTopics: 10
-    },
-    {
-      id: "s2",
-      name: "Operating Systems",
-      icon: Cpu,
-      iconBg: "bg-purple-50 text-purple-600",
-      percentage: 60,
-      topicsCompleted: 6,
-      totalTopics: 10
-    },
-    {
-      id: "s3",
-      name: "Database Management",
-      icon: Database,
-      iconBg: "bg-emerald-50 text-emerald-600",
-      percentage: 70,
-      topicsCompleted: 7,
-      totalTopics: 10
-    },
-    {
-      id: "s4",
-      name: "Computer Networks",
-      icon: Globe,
-      iconBg: "bg-teal-50 text-teal-600",
-      percentage: 50,
-      topicsCompleted: 5,
-      totalTopics: 10
-    }
-  ]
+  const defaultSubjectsProgress: any[] = []
 
   const subjectsList = progress?.subjectProgress && progress.subjectProgress.length > 0
     ? progress.subjectProgress.map((sub, idx) => {
@@ -106,17 +69,17 @@ export default function StudentProgress() {
           name: sub.subjectName || sub.subjectCode,
           icon: icons[idx % icons.length],
           iconBg: colors[idx % colors.length],
-          percentage: sub.progressPercentage || (80 - idx * 10),
-          topicsCompleted: sub.completedNotes || (8 - idx * 2),
-          totalTopics: 10
+          percentage: sub.progressPercentage || 0,
+          topicsCompleted: sub.completedNotes || 0,
+          totalTopics: sub.totalNotes || 0
         }
       })
     : defaultSubjectsProgress
 
-  const notesReadCount = progress?.notesCompleted || 12
-  const quizzesAttemptedCount = progress?.vivaCompleted || 8
-  const avgScore = progress?.averageScore || 72
-  const totalSubjectsCount = subjectsList.length || 5
+  const notesReadCount = progress?.notesCompleted || 0
+  const quizzesAttemptedCount = progress?.vivaCompleted || 0
+  const avgScore = progress?.averageScore || 0
+  const totalSubjectsCount = subjectsList.length
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">

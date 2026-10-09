@@ -9,17 +9,17 @@ interface LearningStatsProps {
 }
 
 export default function LearningStats({
-  notesCompleted = 12,
-  totalNotes = 16,
-  vivaCompleted = 8,
-  averageScore = 84,
-  streakDays = 7
+  notesCompleted = 0,
+  totalNotes = 0,
+  vivaCompleted = 0,
+  averageScore = 0,
+  streakDays = 0
 }: LearningStatsProps) {
   const stats = [
     {
       title: "Notes Completed",
       value: `${notesCompleted} / ${totalNotes}`,
-      subtext: `${Math.round((notesCompleted / (totalNotes || 1)) * 100)}% coverage`,
+      subtext: totalNotes > 0 ? `${Math.round((notesCompleted / totalNotes) * 100)}% coverage` : "0% coverage",
       icon: BookOpen,
       iconColor: "text-emerald-600",
       bgColor: "bg-emerald-50",
@@ -37,7 +37,7 @@ export default function LearningStats({
     {
       title: "Average Score",
       value: `${averageScore}%`,
-      subtext: "High proficiency",
+      subtext: averageScore > 0 ? "Proficiency score" : "No score recorded",
       icon: Award,
       iconColor: "text-emerald-700",
       bgColor: "bg-emerald-100/50",
@@ -46,7 +46,7 @@ export default function LearningStats({
     {
       title: "Learning Streak",
       value: `${streakDays} Days`,
-      subtext: "Active daily learner",
+      subtext: "Daily active learner",
       icon: Flame,
       iconColor: "text-amber-500",
       bgColor: "bg-amber-50",

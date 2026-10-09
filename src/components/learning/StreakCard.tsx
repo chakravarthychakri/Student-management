@@ -7,17 +7,17 @@ interface StreakCardProps {
 
 export default function StreakCard({
   streak = {
-    current_streak: 7,
-    longest_streak: 14,
-    last_activity_date: new Date().toISOString().split("T")[0],
+    current_streak: 0,
+    longest_streak: 0,
+    last_activity_date: "",
     weekly_history: {
-      Mon: true,
-      Tue: true,
-      Wed: true,
-      Thu: true,
-      Fri: true,
-      Sat: true,
-      Sun: true
+      Mon: false,
+      Tue: false,
+      Wed: false,
+      Thu: false,
+      Fri: false,
+      Sat: false,
+      Sun: false
     }
   }
 }: StreakCardProps) {

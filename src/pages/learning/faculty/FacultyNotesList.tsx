@@ -89,8 +89,8 @@ export default function FacultyNotesList() {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* 1. HEADER BANNER */}
-      <div className="bg-white border border-[#E2E8E4] rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div className="space-y-2 max-w-xl">
+      <div className="bg-white border border-[#E2E8E4] rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+        <div className="space-y-3 max-w-xl z-10">
           <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-100">
             <BookOpen className="h-3.5 w-3.5 text-emerald-600" />
             <span>Study Notes Management</span>
@@ -103,14 +103,25 @@ export default function FacultyNotesList() {
           <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
             Create, edit, preview, and manage curriculum notes available to enrolled students.
           </p>
+
+          <div className="pt-1">
+            <Button asChild className="rounded-2xl bg-emerald-600 hover:bg-emerald-700 font-bold text-xs text-white gap-2 shadow-md shadow-emerald-600/20 px-5 shrink-0">
+              <Link to="/learning/faculty/notes/new">
+                <PlusCircle className="h-4 w-4" />
+                <span>Create New Note</span>
+              </Link>
+            </Button>
+          </div>
         </div>
 
-        <Button asChild className="rounded-2xl bg-emerald-600 hover:bg-emerald-700 font-bold text-xs text-white gap-2 shadow-md shadow-emerald-600/20 px-5 shrink-0">
-          <Link to="/learning/faculty/notes/new">
-            <PlusCircle className="h-4 w-4" />
-            <span>Create New Note</span>
-          </Link>
-        </Button>
+        {/* Right: Illustration */}
+        <div className="hidden md:flex shrink-0 items-center justify-center z-10 pr-2">
+          <img
+            src="/assets/illustrations/Faculty-notes-pana.png"
+            alt="Study Notes Management Illustration"
+            className="w-48 h-48 lg:w-56 lg:h-56 object-contain filter drop-shadow-xs transition-transform duration-300 hover:scale-105"
+          />
+        </div>
       </div>
 
       {/* 2. FILTER & SEARCH BAR */}
@@ -196,7 +207,7 @@ export default function FacultyNotesList() {
                     </td>
 
                     <td className="py-4 px-3 font-bold text-slate-900">
-                      {note.views_count || 120} views
+                      {note.views_count || 0} views
                     </td>
 
                     <td className="py-4 px-3 text-slate-400 font-medium">
@@ -261,11 +272,19 @@ export default function FacultyNotesList() {
           </div>
         </div>
       ) : (
-        <div className="bg-white border border-[#E2E8E4] rounded-3xl p-12 text-center space-y-3">
-          <BookOpen className="h-12 w-12 text-slate-300 mx-auto" />
-          <h3 className="text-base font-black text-slate-900">No Notes Found</h3>
-          <p className="text-xs text-slate-500">Get started by creating your first lecture note for students.</p>
-          <Button asChild className="rounded-2xl bg-emerald-600 text-white font-bold text-xs mt-2">
+        <div className="bg-white border border-[#E2E8E4] rounded-3xl p-10 sm:p-12 text-center space-y-4 shadow-xs">
+          <div className="flex justify-center">
+            <img 
+              src="/assets/illustrations/Faculty-notes-pana.png" 
+              alt="No notes illustration"
+              className="w-40 h-40 object-contain filter drop-shadow-xs"
+            />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-base font-black text-slate-900">No Notes Found</h3>
+            <p className="text-xs text-slate-500 max-w-sm mx-auto">Get started by creating your first lecture note for enrolled students.</p>
+          </div>
+          <Button asChild className="rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs">
             <Link to="/learning/faculty/notes/new">Create Note</Link>
           </Button>
         </div>

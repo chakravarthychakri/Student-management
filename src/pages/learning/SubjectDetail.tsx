@@ -68,7 +68,7 @@ export default function SubjectDetail() {
   }
 
   const subjectProg = progressData?.subjectProgress?.find(s => s.subjectId === id)
-  const progressPct = subjectProg?.progressPercentage || 78
+  const progressPct = subjectProg?.progressPercentage || 0
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -172,24 +172,7 @@ export default function SubjectDetail() {
       {/* 3. TAB CONTENT */}
       {activeTab === "roadmap" && (
         <RoadmapView
-          units={subjectProg?.units || [
-            {
-              unit: "Unit 1",
-              title: "Foundations & Core Principles",
-              topics: [
-                { name: "Introduction & Architecture", isCompleted: true },
-                { name: "Data Representations", isCompleted: true }
-              ]
-            },
-            {
-              unit: "Unit 2",
-              title: "Dynamic Operations",
-              topics: [
-                { name: "Dynamic Memory Operations", isCompleted: true, noteId: notes[0]?.id },
-                { name: "Traversal Optimization", isCompleted: false, vivaId: vivaList[0]?.id }
-              ]
-            }
-          ]}
+          units={subjectProg?.units || []}
           subjectName={subject?.name}
         />
       )}

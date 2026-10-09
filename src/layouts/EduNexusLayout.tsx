@@ -15,7 +15,6 @@ import {
   LogOut, 
   Flame, 
   PlusCircle, 
-  Layers, 
   FileQuestion, 
   Sparkles,
   ChevronRight,
@@ -70,7 +69,6 @@ export default function EduNexusLayout() {
   // Faculty Links
   const facultyNavLinks: NavLinkItem[] = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/learning" },
-    { icon: Layers, label: "Faculty Hub", href: "/learning/faculty/dashboard" },
     { icon: FileText, label: "Manage Notes", href: "/learning/faculty/notes" },
     { icon: BrainCircuit, label: "Manage Viva", href: "/learning/faculty/viva" },
     { icon: FileQuestion, label: "Question Bank", href: "/learning/faculty/questions" },

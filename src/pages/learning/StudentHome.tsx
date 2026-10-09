@@ -95,7 +95,7 @@ export default function StudentHome() {
   }
 
   const inProgressNotes = notes.filter(n => !n.is_completed).slice(0, 2)
-  const continueNote = inProgressNotes.length > 0 ? inProgressNotes[0] : notes[0]
+  const continueNote = inProgressNotes.length > 0 ? inProgressNotes[0] : (notes.length > 0 ? notes[0] : null)
   const recentNotes = notes.slice(0, 3)
   const recommendedQuizzes = quizzes.slice(0, 2)
   const bookmarkedNotes = notes.filter(n => n.is_bookmarked).slice(0, 4)
@@ -216,19 +216,24 @@ export default function StudentHome() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-          {subjects.map((subject, idx) => (
-            <SubjectCard
-              key={subject.id}
-              id={subject.id}
-              code={subject.code}
-              name={subject.name}
-              description={subject.description}
-              facultyName={subject.faculty_name}
-              notesCount={idx === 0 ? 5 : 4}
-              vivaCount={idx === 0 ? 2 : 1}
-              progressPercentage={idx === 0 ? 84 : (idx === 1 ? 76 : (idx === 2 ? 65 : 88))}
-            />
-          ))}
+          {subjects.map((subject) => {
+            const subNotes = notes.filter((n) => n.subject_id === subject.id)
+            const subViva = quizzes.filter((q) => q.subject_id === subject.id)
+            const subProg = progressData?.subjectProgress?.find((p: any) => p.subjectId === subject.id)
+            return (
+              <SubjectCard
+                key={subject.id}
+                id={subject.id}
+                code={subject.code}
+                name={subject.name}
+                description={subject.description}
+                facultyName={subject.faculty_name}
+                notesCount={subNotes.length}
+                vivaCount={subViva.length}
+                progressPercentage={subProg?.progressPercentage || 0}
+              />
+            )
+          })}
         </div>
       </section>
 
@@ -317,11 +322,17 @@ export default function StudentHome() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
-          {recentNotes.map((note) => (
-            <NoteCard key={note.id} note={note} />
-          ))}
-        </div>
+        {recentNotes.length === 0 ? (
+          <div className="text-center py-10 px-4 rounded-3xl bg-slate-50/70 border border-slate-200/70 text-slate-400 font-medium text-xs">
+            No lecture notes uploaded yet. Your professors will publish notes for your subjects soon.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+            {recentNotes.map((note) => (
+              <NoteCard key={note.id} note={note} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* 7. MULTIMEDIA LEARNING (Podcast-rafiki.png — IMAGE RIGHT) */}
@@ -403,11 +414,17 @@ export default function StudentHome() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-          {recommendedQuizzes.map((quiz) => (
-            <VivaCard key={quiz.id} quiz={quiz} />
-          ))}
-        </div>
+        {recommendedQuizzes.length === 0 ? (
+          <div className="text-center py-10 px-4 rounded-3xl bg-slate-50/70 border border-slate-200/70 text-slate-400 font-medium text-xs">
+            No Viva quizzes published yet. Practice quizzes will appear here once assigned by faculty.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+            {recommendedQuizzes.map((quiz) => (
+              <VivaCard key={quiz.id} quiz={quiz} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* 9. SEARCH & EXPLORE (Search-rafiki.png — IMAGE LEFT) */}
@@ -592,11 +609,11 @@ export default function StudentHome() {
       {/* CONTINUED STUDY & STATS SUMMARY */}
       <div className="space-y-6">
         <LearningStats
-          notesCompleted={progressData?.notesCompleted || 12}
-          totalNotes={progressData?.totalNotes || 16}
-          vivaCompleted={progressData?.vivaCompleted || 8}
-          averageScore={progressData?.averageScore || 84}
-          streakDays={progressData?.learningStreak?.current_streak || 7}
+          notesCompleted={progressData?.notesCompleted || 0}
+          totalNotes={progressData?.totalNotes || 0}
+          vivaCompleted={progressData?.vivaCompleted || 0}
+          averageScore={progressData?.averageScore || 0}
+          streakDays={progressData?.learningStreak?.current_streak || 0}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -625,15 +642,15 @@ export default function StudentHome() {
                 {/* Progress Slider */}
                 <div className="mt-5 space-y-1.5">
                   <div className="flex items-center justify-between text-xs font-bold text-slate-700">
-                    <span>Subject: {continueNote.subject?.name || "Data Structures"}</span>
+                    <span>Subject: {continueNote.subject?.name || "Subject"}</span>
                     <span className="text-emerald-700 font-extrabold">
-                      {continueNote.progress_percentage || 40}% Completed
+                      {continueNote.progress_percentage || 0}% Completed
                     </span>
                   </div>
                   <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-emerald-500 to-green-600 rounded-full transition-all duration-500"
-                      style={{ width: `${continueNote.progress_percentage || 40}%` }}
+                      style={{ width: `${continueNote.progress_percentage || 0}%` }}
                     />
                   </div>
                 </div>

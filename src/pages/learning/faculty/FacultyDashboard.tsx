@@ -66,8 +66,8 @@ export default function FacultyDashboard() {
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
       {/* 1. HEADER BANNER */}
-      <div className="bg-white border border-[#E2E8E4] rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div className="space-y-2 max-w-xl">
+      <div className="bg-white border border-[#E2E8E4] rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+        <div className="space-y-3 max-w-xl z-10">
           <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-100">
             <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
             <span>Faculty Studio</span>
@@ -80,23 +80,32 @@ export default function FacultyDashboard() {
           <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
             Publish curriculum study notes, configure timed Viva quizzes, and monitor real-time class learning analytics.
           </p>
+
+          {/* Quick Action Buttons */}
+          <div className="flex items-center gap-3 flex-wrap pt-1">
+            <Button asChild className="rounded-2xl bg-emerald-600 hover:bg-emerald-700 font-bold text-xs text-white gap-2 shadow-md shadow-emerald-600/20 px-5">
+              <Link to="/learning/faculty/notes/new">
+                <PlusCircle className="h-4 w-4" />
+                <span>Create Note</span>
+              </Link>
+            </Button>
+
+            <Button asChild variant="outline" className="rounded-2xl border-emerald-200 text-emerald-800 hover:bg-emerald-50 font-bold text-xs gap-2">
+              <Link to="/learning/faculty/viva/new">
+                <BrainCircuit className="h-4 w-4" />
+                <span>Create Viva Quiz</span>
+              </Link>
+            </Button>
+          </div>
         </div>
 
-        {/* Quick Action Buttons */}
-        <div className="flex items-center gap-3 flex-wrap">
-          <Button asChild className="rounded-2xl bg-emerald-600 hover:bg-emerald-700 font-bold text-xs text-white gap-2 shadow-md shadow-emerald-600/20 px-5">
-            <Link to="/learning/faculty/notes/new">
-              <PlusCircle className="h-4 w-4" />
-              <span>Create Note</span>
-            </Link>
-          </Button>
-
-          <Button asChild variant="outline" className="rounded-2xl border-emerald-200 text-emerald-800 hover:bg-emerald-50 font-bold text-xs gap-2">
-            <Link to="/learning/faculty/viva/new">
-              <BrainCircuit className="h-4 w-4" />
-              <span>Create Viva Quiz</span>
-            </Link>
-          </Button>
+        {/* Right: Professor Dashboard Illustration */}
+        <div className="hidden md:flex shrink-0 items-center justify-center z-10 pr-2">
+          <img
+            src="/assets/illustrations/Faculty-analytics-pana.png"
+            alt="Faculty Learning Management Illustration"
+            className="w-48 h-48 lg:w-56 lg:h-56 object-contain filter drop-shadow-xs transition-transform duration-300 hover:scale-105"
+          />
         </div>
       </div>
 
@@ -108,7 +117,7 @@ export default function FacultyDashboard() {
             <BookOpen className="h-4 w-4 text-emerald-600" />
           </div>
           <div className="text-2xl font-black text-slate-900">
-            {data?.publishedNotesCount || 24}
+            {data?.publishedNotesCount || 0}
           </div>
           <p className="text-[11px] font-semibold text-emerald-700 mt-1">
             Active in library
@@ -121,7 +130,7 @@ export default function FacultyDashboard() {
             <BrainCircuit className="h-4 w-4 text-green-600" />
           </div>
           <div className="text-2xl font-black text-slate-900">
-            {data?.vivaQuizzesCount || 8}
+            {data?.vivaQuizzesCount || 0}
           </div>
           <p className="text-[11px] font-semibold text-emerald-700 mt-1">
             Across your subjects
@@ -134,7 +143,7 @@ export default function FacultyDashboard() {
             <Users className="h-4 w-4 text-blue-600" />
           </div>
           <div className="text-2xl font-black text-slate-900">
-            {data?.totalAttempts || 326}
+            {data?.totalAttempts || 0}
           </div>
           <p className="text-[11px] font-semibold text-blue-600 mt-1">
             Completed tests
@@ -147,7 +156,7 @@ export default function FacultyDashboard() {
             <Award className="h-4 w-4 text-emerald-700" />
           </div>
           <div className="text-2xl font-black text-emerald-800">
-            {data?.averageScore || 78}%
+            {data?.averageScore || 0}%
           </div>
           <p className="text-[11px] font-semibold text-emerald-700 mt-1">
             Proficiency level
@@ -193,8 +202,8 @@ export default function FacultyDashboard() {
         </div>
 
         {/* Quick Question Bank Helper Card */}
-        <div className="bg-gradient-to-br from-emerald-50 to-green-50/50 border border-emerald-100 rounded-3xl p-6 sm:p-7 shadow-xs flex flex-col justify-between space-y-4">
-          <div className="space-y-2">
+        <div className="bg-gradient-to-br from-emerald-50/90 via-green-50/40 to-white border border-emerald-100 rounded-3xl p-6 sm:p-7 shadow-xs flex flex-col justify-between space-y-4 relative overflow-hidden">
+          <div className="space-y-2 relative z-10">
             <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
               <FileQuestion className="h-5 w-5" />
             </div>
@@ -206,9 +215,17 @@ export default function FacultyDashboard() {
             </p>
           </div>
 
-          <div className="space-y-2">
+          <div className="flex items-center justify-center py-2 relative z-10">
+            <img 
+              src="/assets/illustrations/Question-bank-pana.png" 
+              alt="Question Bank Repository"
+              className="w-32 h-32 object-contain transition-transform duration-300 hover:scale-105"
+            />
+          </div>
+
+          <div className="space-y-2 relative z-10">
             <div className="text-xs font-extrabold text-emerald-900">
-              {data?.questionBankCount || 3} Questions in repository
+              {data?.questionBankCount || 0} Questions in repository
             </div>
             <Button asChild className="w-full rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs">
               <Link to="/learning/faculty/questions">
@@ -238,55 +255,74 @@ export default function FacultyDashboard() {
           </Button>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="border-b border-slate-100 text-slate-400 font-extrabold uppercase tracking-wider">
-                <th className="pb-3 px-3">Subject Name</th>
-                <th className="pb-3 px-3">Enrolled Students</th>
-                <th className="pb-3 px-3">Average Viva Score</th>
-                <th className="pb-3 px-3">Notes Completion</th>
-                <th className="pb-3 px-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 font-semibold text-slate-700">
-              {(data?.subjectPerformance || []).map((sub, i) => (
-                <tr key={i} className="hover:bg-slate-50/80 transition-colors">
-                  <td className="py-3.5 px-3 font-bold text-slate-900">
-                    {sub.subject}
-                  </td>
-                  <td className="py-3.5 px-3">
-                    {sub.enrolledStudents} Students
-                  </td>
-                  <td className="py-3.5 px-3">
-                    <span className="px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-800 font-bold">
-                      {sub.avgScore}%
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 bg-slate-100 h-2 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-emerald-600 rounded-full"
-                          style={{ width: `${sub.notesCompletedPct}%` }}
-                        />
-                      </div>
-                      <span className="text-[11px] font-bold text-slate-500">{sub.notesCompletedPct}%</span>
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-3 text-right">
-                    <Link
-                      to="/learning/faculty/analytics"
-                      className="text-xs font-bold text-emerald-700 hover:underline"
-                    >
-                      View Students
-                    </Link>
-                  </td>
+        {(!data?.subjectPerformance || data.subjectPerformance.length === 0) ? (
+          <div className="text-center py-12 px-4 rounded-2xl bg-slate-50/70 border border-slate-100 space-y-3">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
+              <BookOpen className="h-6 w-6" />
+            </div>
+            <div className="space-y-1">
+              <h4 className="text-sm font-black text-slate-900">No Subject Notes Added Yet</h4>
+              <p className="text-xs text-slate-500 font-medium max-w-md mx-auto">
+                Once you publish lecture notes or Viva quizzes for a subject, that subject's performance, student engagement, and completion metrics will appear here.
+              </p>
+            </div>
+            <Button asChild className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs h-9 px-4">
+              <Link to="/learning/faculty/notes/new">
+                + Add First Note
+              </Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-slate-100 text-slate-400 font-extrabold uppercase tracking-wider">
+                  <th className="pb-3 px-3">Subject Name</th>
+                  <th className="pb-3 px-3">Enrolled Students</th>
+                  <th className="pb-3 px-3">Average Viva Score</th>
+                  <th className="pb-3 px-3">Notes Completion</th>
+                  <th className="pb-3 px-3 text-right">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-slate-100 font-semibold text-slate-700">
+                {data.subjectPerformance.map((sub, i) => (
+                  <tr key={i} className="hover:bg-slate-50/80 transition-colors">
+                    <td className="py-3.5 px-3 font-bold text-slate-900">
+                      {sub.subject}
+                    </td>
+                    <td className="py-3.5 px-3">
+                      {sub.enrolledStudents} Students
+                    </td>
+                    <td className="py-3.5 px-3">
+                      <span className="px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-800 font-bold">
+                        {sub.avgScore}%
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-24 bg-slate-100 h-2 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-emerald-600 rounded-full"
+                            style={{ width: `${sub.notesCompletedPct}%` }}
+                          />
+                        </div>
+                        <span className="text-[11px] font-bold text-slate-500">{sub.notesCompletedPct}%</span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-3 text-right">
+                      <Link
+                        to="/learning/faculty/analytics"
+                        className="text-xs font-bold text-emerald-700 hover:underline"
+                      >
+                        View Students
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -37,8 +37,13 @@ export default function RoadmapView({ units, subjectName = "Subject" }: RoadmapV
         </div>
       </div>
 
-      <div className="space-y-8 relative before:absolute before:inset-0 before:left-6 before:w-0.5 before:bg-emerald-100/80 before:hidden sm:before:block">
-        {units.map((u, uIdx) => (
+      {(!units || units.length === 0) ? (
+        <div className="text-center py-12 text-slate-400 font-medium text-xs">
+          No roadmap units published yet. Your professor will publish curriculum units soon.
+        </div>
+      ) : (
+        <div className="space-y-8 relative before:absolute before:inset-0 before:left-6 before:w-0.5 before:bg-emerald-100/80 before:hidden sm:before:block">
+          {units.map((u, uIdx) => (
           <div key={uIdx} className="relative z-10 space-y-3">
             <div className="flex items-center gap-3">
               <span className="px-3 py-1 rounded-xl bg-emerald-600 text-white font-black text-xs uppercase tracking-wider shadow-sm shadow-emerald-600/20">
@@ -95,7 +100,8 @@ export default function RoadmapView({ units, subjectName = "Subject" }: RoadmapV
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

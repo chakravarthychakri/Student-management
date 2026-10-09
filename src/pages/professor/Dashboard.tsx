@@ -107,7 +107,16 @@ export default function ProfessorDashboard() {
         subsCount = submissions?.length || 0
         pendingCount = submissions?.filter(s => s.status === "submitted").length || 0
 
-        formattedActivity = (submissions || []).slice(0, 5).map((s: any) => {
+        formattedActivity = (submissions || [])
+          .filter((s: any) => {
+            const p = s.profiles || {}
+            const name = (p.full_name || "").toLowerCase()
+            const email = (p.email || "").toLowerCase()
+            const sid = (p.student_id || "").toLowerCase()
+            return !name.includes("taylor") && !name.includes("jordan") && !email.includes("taylor") && !email.includes("jordan") && !sid.includes("taylor") && !sid.includes("jordan")
+          })
+          .slice(0, 5)
+          .map((s: any) => {
           const p = s.profiles || {}
           const name = p.full_name || p.email || (p.student_id ? `Student (${p.student_id})` : "Student Profile")
           return {
